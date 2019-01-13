@@ -2,43 +2,55 @@ import java.util.*;
 
 public class Crypto {
     public static void main(String[] args) {
+        Scanner input = new Scanner(System.in);
+
         // take in a string to be encrypted
-        normaliseText("Hello world    ggggg(. , : ; ’ ” ! ? ( ) )");
-        obify("FIRE");
-        ceasarify("ILIKEZOOS", 1);
+        System.out.print("Please enter the text to be encrypted: ");
+        String input_string = input.next();
+
+        // take in shift value
+        System.out.print("Please enter the shift value for the caesar cypher: ");
+        int shift = input.nextInt();
+
+        // take in group value
+        System.out.print("Please enter the group value for the grouped cypher: ");
+        int group = input.nextInt();
+
+        System.out.println(encryptString(input_string, shift, group));
     }
+    // Method to remove all spaces, punctuation and to capitalise the resulting string
     public static String normaliseText(String s) {
 
         // remove all spaces and punctuation
         s = s.replaceAll("\\s|[^a-zA-Z0-9]","");
 
         // make all upper case
-        s = s.toUpperCase();
+        String normalisedText = s.toUpperCase();
 
         // return the result
-        return s;
-
+        return normalisedText;
     }
+
+    // Method to obify by adding "OB" in front of any vowel in the string
     public static String obify(String s) {
 
-        s = s.replaceAll("(A|E|I|O|U|Y)", "OB$1");
-        return s;
-
+        String obifiedText = s.replaceAll("(A|E|I|O|U|Y)", "OB$1");
+        return obifiedText;
     }
-    public static String ceasarify(String s, int key) {
+
+    // Method to cypher the text using the caesar technique
+    public static String caesarify(String s, int key) {
 
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         String shifted_alphabet = shiftAlphabet(key);
-        String shifted_string = "";
+        String caesarifiedText = "";
 
         for (int i = 0; i < s.length(); i++) {
             char letter = s.charAt(i);
             int index_alpha = alphabet.indexOf(String.valueOf(letter));
-            shifted_string += shifted_alphabet.charAt(index_alpha);
+            caesarifiedText += shifted_alphabet.charAt(index_alpha);
         }
-
-        System.out.println(shifted_string);
-        return shifted_string;
+        return caesarifiedText;
     }
 
     // Method to shift alphabet by given shift value (positive or negative)
@@ -65,13 +77,37 @@ public class Crypto {
         return result;
     }
 
+    public static String groupify(String all, int letters_p_g) {
 
-//    public static String groupify() {
-//        return groupifiedText;
-//    }
-//
-//    public static String encryptString() {
-//
-//    }
+        while (all.length() % letters_p_g != 0) {
+            all += 'x';
+        }
+        String groupifiedText = "";
 
+        for (int i=0; i < all.length(); i++) {
+            groupifiedText += all.charAt(i);
+            if ((groupifiedText.substring(0,i+1)).length() % letters_p_g == 0 && i >=1) {
+                groupifiedText += ' ';
+            }
+        }
+        return groupifiedText;
+    }
+
+    public static String encryptString(String input_string, int shift, int group_size) {
+
+        // Call normalizeText on the input string
+        String normalisedText = normaliseText(input_string);
+
+        // Call obify to obfuscate the normalized text
+        String obifiedText = obify(normalisedText);
+
+        // Call caesarify to encrypt the obfuscated text
+        String caesarifiedText = caesarify(obifiedText, shift);
+
+        // Call groupify to break the cypher text into groups of size letters
+        String groupifiedText = groupify(caesarifiedText, group_size);
+
+        // Return the result
+        return (groupifiedText);
+    }
 }
