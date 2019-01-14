@@ -1,22 +1,28 @@
+import javax.sound.midi.SysexMessage;
 import java.util.*;
 
 public class Crypto {
     public static void main(String[] args) {
         Scanner input = new Scanner(System.in);
 
-        // take in a string to be encrypted
-        System.out.print("Please enter the text to be encrypted: ");
-        String input_string = input.next();
+            System.out.println("Starting encryption program....");
 
-        // take in shift value
-        System.out.print("Please enter the shift value for the caesar cypher: ");
-        int shift = input.nextInt();
+            // take in a string to be encrypted
+            System.out.print("Please enter the text to be encrypted: ");
+            String input_string = input.nextLine();
 
-        // take in group value
-        System.out.print("Please enter the group value for the grouped cypher: ");
-        int group = input.nextInt();
+            // take in shift value
+            System.out.print("Please enter the shift value for the caesar cypher: ");
+            int shift = input.nextInt();
 
-        System.out.println(encryptString(input_string, shift, group));
+            // take in group value
+            System.out.print("Please enter the group value for the grouped cypher: ");
+            int group = input.nextInt();
+            String encrypted = (encryptString(input_string, shift, group));
+            System.out.println(encrypted);
+
+            // decryption of string check
+            System.out.println(decryptString(encrypted,shift));
     }
     // Method to remove all spaces, punctuation and to capitalise the resulting string
     public static String normaliseText(String s) {
@@ -77,6 +83,7 @@ public class Crypto {
         return result;
     }
 
+    // Group cypher string into equal length blocks
     public static String groupify(String all, int letters_p_g) {
 
         while (all.length() % letters_p_g != 0) {
@@ -93,6 +100,7 @@ public class Crypto {
         return groupifiedText;
     }
 
+    // encrypt a given string
     public static String encryptString(String input_string, int shift, int group_size) {
 
         // Call normalizeText on the input string
@@ -110,4 +118,32 @@ public class Crypto {
         // Return the result
         return (groupifiedText);
     }
+
+    // ungroup letters by removing whitespace and 'x'
+    public static String ungroupify(String all) {
+        all = all.replaceAll(" |[x]", "");
+        return all;
+    }
+
+    // de-obify by removing "OB"
+    public static String deobify(String decaesered) {
+        String deobified = "";
+        for (int i = 0; i < decaesered.length(); i++){
+            if (decaesered.charAt(i) == 'O' && decaesered.charAt(i+1) == 'B') {
+                i++;
+            } else {
+                deobified += decaesered.charAt(i);
+            }
+        }
+        return deobified;
+    }
+
+    // decrypt a given string
+    public static String decryptString(String input_string, int shift) {
+        input_string = ungroupify(input_string);
+        input_string = caesarify(input_string, -(shift));
+        input_string = deobify(input_string);
+        return (input_string);
+    }
+
 }
